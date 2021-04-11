@@ -20,10 +20,6 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
         </repository>
-        <repository>
-            <id>bintray</id>
-            <url>https://dl.bintray.com/zakgof/maven/</url>
-        </repository>
     </repositories>
 
     <dependencies>
@@ -40,26 +36,44 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.zakgof</groupId>
-            <artifactId>velvet-video</artifactId>
-            <version>0.5.0</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>com.github.zakgof</groupId>
-            <artifactId>velvet-video-natives</artifactId>
-            <version>0.2.6.full</version>
-            <type>pom</type>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.5</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>UtilTPA</finalName>
+        <finalName>VideoPlayer</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.2.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                </configuration>
             </plugin>
         </plugins>
     </build>

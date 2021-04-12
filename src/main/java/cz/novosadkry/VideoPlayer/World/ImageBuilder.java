@@ -1,6 +1,7 @@
 package cz.novosadkry.VideoPlayer.World;
 
 import cz.novosadkry.VideoPlayer.Video.PixelColor;
+import cz.novosadkry.VideoPlayer.Video.VideoMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -8,13 +9,19 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 
 public class ImageBuilder {
+    private VideoMode mode;
     private final Location start;
     private final int width, height;
 
     public ImageBuilder(Location start, int width, int height) {
+        this(start, width, height, VideoMode.RGB);
+    }
+
+    public ImageBuilder(Location start, int width, int height, VideoMode mode) {
         this.start = start;
         this.width = width;
         this.height = height;
+        this.mode = mode;
     }
 
     public int getWidth() {
@@ -23,6 +30,14 @@ public class ImageBuilder {
 
     public int getHeight() {
         return height;
+    }
+
+    public VideoMode getMode() {
+        return mode;
+    }
+
+    public void setMode(VideoMode mode) {
+        this.mode = mode;
     }
 
     public void destroy() {
@@ -50,7 +65,7 @@ public class ImageBuilder {
             for (int y = 0; y < height; y++) {
                 int[] p = data.getPixel(width - x - 1, height - y - 1, (int[]) null);
                 Location pos = start.clone().add(x, y, 0);
-                pos.getBlock().setType(PixelColor.get(p).toMaterial(), false);
+                pos.getBlock().setType(PixelColor.get(p, mode).toMaterial(), false);
             }
         }
     }

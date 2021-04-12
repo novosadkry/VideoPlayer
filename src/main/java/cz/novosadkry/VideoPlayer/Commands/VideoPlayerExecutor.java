@@ -1,6 +1,7 @@
 package cz.novosadkry.VideoPlayer.Commands;
 
 import cz.novosadkry.VideoPlayer.Main;
+import cz.novosadkry.VideoPlayer.Video.VideoMode;
 import cz.novosadkry.VideoPlayer.Video.VideoPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -57,6 +58,13 @@ public class VideoPlayerExecutor implements CommandExecutor {
             case "play":
                 if (current != null)
                     current.play();
+                else
+                    player.sendMessage("You need to create a player first!");
+                break;
+
+            case "mode":
+                if (current != null)
+                    current.setMode(VideoMode.valueOf(args[1]));
                 else
                     player.sendMessage("You need to create a player first!");
                 break;

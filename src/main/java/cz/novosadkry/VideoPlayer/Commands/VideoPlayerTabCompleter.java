@@ -1,6 +1,7 @@
 package cz.novosadkry.VideoPlayer.Commands;
 
 import cz.novosadkry.VideoPlayer.Main;
+import cz.novosadkry.VideoPlayer.Video.VideoMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -16,7 +17,8 @@ public class VideoPlayerTabCompleter implements TabCompleter {
             "destroy",
             "stop",
             "pause",
-            "play"
+            "play",
+            "mode"
     );
 
     public List<String> getFolderContents(File folder) {
@@ -53,6 +55,15 @@ public class VideoPlayerTabCompleter implements TabCompleter {
         if (args[0].equalsIgnoreCase("create")) {
             if (args.length == 2) {
                 return getAvailableVideos().stream()
+                        .filter(v -> v.startsWith(args[1]))
+                        .collect(Collectors.toList());
+            }
+        }
+
+        if (args[0].equalsIgnoreCase("mode")) {
+            if (args.length == 2) {
+                return Arrays.stream(VideoMode.values())
+                        .map(Enum::name)
                         .filter(v -> v.startsWith(args[1]))
                         .collect(Collectors.toList());
             }

@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 public class VideoPlayer {
     private final String file;
 
+    private VideoMode mode;
     private boolean initialized;
     private boolean playing;
     private BukkitTask task;
@@ -21,7 +22,12 @@ public class VideoPlayer {
     private final Java2DFrameConverter frameConverter;
 
     public VideoPlayer(String file, Location loc, int width, int height) {
+        this(file, loc, width, height, VideoMode.RGB);
+    }
+
+    public VideoPlayer(String file, Location loc, int width, int height, VideoMode mode) {
         this.file = file;
+        this.mode = mode;
         this.frameBuilder = new ImageBuilder(loc, width, height);
         this.frameConverter = new Java2DFrameConverter();
     }
@@ -82,5 +88,14 @@ public class VideoPlayer {
         catch (FrameGrabber.Exception e) { e.printStackTrace(); }
 
         initialized = false;
+    }
+
+    public VideoMode getMode() {
+        return mode;
+    }
+
+    public void setMode(VideoMode mode) {
+        this.mode = mode;
+        this.frameBuilder.setMode(mode);
     }
 }

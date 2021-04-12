@@ -57,33 +57,27 @@ public enum PixelColor {
     }
 
     public static PixelColor get(int[] p) {
+        PixelColor out = BLACK;
+        int closest = Integer.MAX_VALUE;
+
         for (Map.Entry<PixelColor, int[]> entry : colors.entrySet()) {
-            int[] range = entry.getValue();
+            int[] paletteColor = entry.getValue();
+            int distance = distance(paletteColor, p);
 
-            boolean match =
-                approx(range[0], p[0], 35) &&
-                approx(range[1], p[1], 35) &&
-                approx(range[2], p[2], 35);
-
-            if (match)
-                return entry.getKey();
+            if (distance < closest) {
+                closest = distance;
+                out = entry.getKey();
+            }
         }
 
-        int v = avg(p);
-
-        if (v > 180)
-            return WHITE;
-        else if (v > 60)
-            return GRAY;
-        else
-            return BLACK;
+        return out;
     }
 
-    private static int avg(int[] p) {
-        return (p[0] + p[1] + p[2]) / (255 * 3);
-    }
+    private static int distance(int[] p1, int[] p2) {
+        int r = p1[0] - p2[0];
+        int g = p1[1] - p2[1];
+        int b = p1[2] - p2[2];
 
-    private static boolean approx(int range, int value, int delta) {
-        return (value > range - delta) && (value < range + delta);
+        return (r * r) + (g * g) + (b * b);
     }
 }

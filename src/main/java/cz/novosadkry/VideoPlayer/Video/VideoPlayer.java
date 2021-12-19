@@ -1,6 +1,7 @@
 package cz.novosadkry.VideoPlayer.Video;
 
 import cz.novosadkry.VideoPlayer.Main;
+import cz.novosadkry.VideoPlayer.World.BlockImageBuilder;
 import cz.novosadkry.VideoPlayer.World.ImageBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,14 +22,14 @@ public class VideoPlayer {
     private final ImageBuilder frameBuilder;
     private final Java2DFrameConverter frameConverter;
 
-    public VideoPlayer(String file, Location loc, int width, int height) {
-        this(file, loc, width, height, VideoMode.RGB);
+    public VideoPlayer(String file, ImageBuilder builder) {
+        this(file, builder, VideoMode.RGB);
     }
 
-    public VideoPlayer(String file, Location loc, int width, int height, VideoMode mode) {
+    public VideoPlayer(String file, ImageBuilder builder, VideoMode mode) {
         this.file = file;
         this.mode = mode;
-        this.frameBuilder = new ImageBuilder(loc, width, height);
+        this.frameBuilder = builder;
         this.frameConverter = new Java2DFrameConverter();
     }
 

@@ -3,6 +3,7 @@ package cz.novosadkry.VideoPlayer.Commands;
 import cz.novosadkry.VideoPlayer.Main;
 import cz.novosadkry.VideoPlayer.Video.VideoMode;
 import cz.novosadkry.VideoPlayer.Video.VideoPlayer;
+import cz.novosadkry.VideoPlayer.World.BlockImageBuilder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,9 +24,11 @@ public class VideoPlayerExecutor implements CommandExecutor {
                 if (current == null) {
                     current = new VideoPlayer(
                         Main.VIDEO_FOLDER + args[1],
-                        player.getLocation(),
-                        Integer.parseInt(args[2]),
-                        Integer.parseInt(args[3])
+                        new BlockImageBuilder(
+                            player.getLocation(),
+                            Integer.parseInt(args[2]),
+                            Integer.parseInt(args[3])
+                        )
                     );
 
                     current.build();

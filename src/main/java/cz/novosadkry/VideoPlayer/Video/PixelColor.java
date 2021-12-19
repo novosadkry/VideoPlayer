@@ -75,27 +75,18 @@ public enum PixelColor {
     }
 
     public static PixelColor getGrayScale(int[] p) {
-        PixelColor out = BLACK;
-        int closest = Integer.MAX_VALUE;
-
-        for (Map.Entry<PixelColor, int[]> entry : grayScale.entrySet()) {
-            int[] paletteColor = entry.getValue();
-            int distance = distance(paletteColor, p);
-
-            if (distance < closest) {
-                closest = distance;
-                out = entry.getKey();
-            }
-        }
-
-        return out;
+        return get(p, grayScale);
     }
 
     public static PixelColor getRGB(int[] p) {
+        return get(p, rgb);
+    }
+
+    private static PixelColor get(int[] p, HashMap<PixelColor, int[]> palette) {
         PixelColor out = BLACK;
         int closest = Integer.MAX_VALUE;
 
-        for (Map.Entry<PixelColor, int[]> entry : rgb.entrySet()) {
+        for (Map.Entry<PixelColor, int[]> entry : palette.entrySet()) {
             int[] paletteColor = entry.getValue();
             int distance = distance(paletteColor, p);
 

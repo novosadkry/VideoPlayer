@@ -70,7 +70,7 @@ public enum PixelColor {
             case GRAYSCALE:
                 return getGrayScale(p);
             default:
-                return null;
+                return BLACK;
         }
     }
 

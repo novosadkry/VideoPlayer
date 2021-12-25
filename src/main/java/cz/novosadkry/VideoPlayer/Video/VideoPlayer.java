@@ -63,9 +63,7 @@ public class VideoPlayer {
                     frameBuilder.build(image);
                 } else stop();
             }, 0L, 1L);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception ignored) { }
 
         initialized = true;
     }
@@ -86,7 +84,7 @@ public class VideoPlayer {
             task.cancel();
 
         try { frameGrabber.stop(); }
-        catch (FrameGrabber.Exception e) { e.printStackTrace(); }
+        catch (Exception ignored) { }
 
         initialized = false;
     }

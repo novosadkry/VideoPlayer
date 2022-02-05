@@ -1,14 +1,18 @@
 package cz.novosadkry.VideoPlayer.World;
 
 import cz.novosadkry.VideoPlayer.Video.VideoMode;
+import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCanvas;
+import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
@@ -81,12 +85,15 @@ public class MapImageBuilder extends ImageBuilder {
 
     @Override
     public void build() {
-        for (int x = 0; x < width / 128; x++) {
-            for (int y = 0; y < height / 128; y++) {
+        int w = width / 128;
+        int h = height / 128;
+
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
                 Location pos = start.clone().add(x, y, 0);
                 pos.getBlock().setType(Material.STONE, false);
 
-                pos = pos.add(x, y, -1);
+                pos = pos.add(0, 0, -1);
                 ItemFrame mapFrame = pos.getWorld().spawn(pos, ItemFrame.class);
 
                 ItemStack map = new ItemStack(Material.FILLED_MAP);
@@ -98,8 +105,8 @@ public class MapImageBuilder extends ImageBuilder {
                     mapView.removeRenderer(renderer);
 
                 Renderer mapRenderer = new Renderer();
-                mapRenderer.setOffsetX(x * 128);
-                mapRenderer.setOffsetY(y * 128);
+                mapRenderer.setOffsetX((w - 1) * 128 - x * 128);
+                mapRenderer.setOffsetY((h - 1) * 128 - y * 128);
 
                 mapView.addRenderer(mapRenderer);
                 mapMeta.setMapView(mapView);
@@ -118,8 +125,32 @@ public class MapImageBuilder extends ImageBuilder {
             ItemStack map = mapFrame.getItem();
             MapMeta mapMeta = (MapMeta) map.getItemMeta();
 
-            Renderer renderer = (Renderer) mapMeta.getMapView().getRenderers().get(0);
-            renderer.setImage(image);
+            Renderer renderer = (Renderer) mapMeta
+                    .getMapView()
+                    .getRenderers()
+                    .get(0);
+
+            BufferedImage sub = image.getSubimage(
+                    renderer.getOffsetX(),
+                    renderer.getOffsetY(),
+                    128, 128
+            );
+
+            byte[] colorIds = MapPalette.imageToBytes(sub);
+
+            var packet = new ClientboundMapItemDataPacket(
+                    mapMeta.getMapId(),
+                    (byte)0, false,
+                    new ArrayList<>(),
+                    new MapItemSavedData.MapPatch(
+                            0, 0,
+                            128, 128,
+                            colorIds
+                    )
+            );
+
+            for (Player player : Bukkit.getOnlinePlayers())
+                ((CraftPlayer) player).getHandle().connection.send(packet);
         }
     }
 }

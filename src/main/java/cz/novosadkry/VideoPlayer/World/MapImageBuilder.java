@@ -1,5 +1,6 @@
 package cz.novosadkry.VideoPlayer.World;
 
+import cz.novosadkry.VideoPlayer.Main;
 import cz.novosadkry.VideoPlayer.Video.VideoMode;
 import net.minecraft.network.protocol.game.ClientboundMapItemDataPacket;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
@@ -12,11 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCanvas;
-import org.bukkit.map.MapPalette;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
 import java.util.ArrayList;
 
 public class MapImageBuilder extends ImageBuilder {
@@ -75,8 +77,11 @@ public class MapImageBuilder extends ImageBuilder {
             mapFrame.remove();
         }
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        int w = width / 128;
+        int h = height / 128;
+
+        for (int x = 0; x < w; x++) {
+            for (int y = 0; y < h; y++) {
                 Location pos = start.clone().add(x, y, 0);
                 pos.getBlock().setType(Material.AIR, false);
             }
@@ -130,13 +135,28 @@ public class MapImageBuilder extends ImageBuilder {
                     .getRenderers()
                     .get(0);
 
-            BufferedImage sub = image.getSubimage(
-                    renderer.getOffsetX(),
-                    renderer.getOffsetY(),
-                    128, 128
-            );
+            DataBuffer data = image.getData().getDataBuffer();
+            byte[] pixels = ((DataBufferByte) data).getData();
 
-            byte[] colorIds = MapPalette.imageToBytes(sub);
+            int ox = renderer.getOffsetX();
+            int oy = renderer.getOffsetY();
+
+            byte[] colorIds = new byte[128 * 128];
+
+            for (int y = 0; y < 128; y++) {
+                for (int x = 0; x < 128; x++) {
+                    int i = x + y * 128;
+                    int p = (x + ox) + (y + oy) * width;
+
+                    int r = pixels[p * 3 + 2];
+                    int g = pixels[p * 3 + 1];
+                    int b = pixels[p * 3    ];
+
+                    int v = ((r & 0xFF) | ((g & 0xFF) << 8) | ((b & 0xFF) << 16));
+
+                    colorIds[i] = Main.cachedColorIds[v];
+                }
+            }
 
             var packet = new ClientboundMapItemDataPacket(
                     mapMeta.getMapId(),

@@ -1,10 +1,8 @@
 package cz.novosadkry.VideoPlayer.Video;
 
 import cz.novosadkry.VideoPlayer.Main;
-import cz.novosadkry.VideoPlayer.World.BlockImageBuilder;
 import cz.novosadkry.VideoPlayer.World.ImageBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitTask;
 import org.bytedeco.javacv.*;
 
@@ -56,8 +54,9 @@ public class VideoPlayer {
                     return;
 
                 BufferedImage image = null;
-                try { image = frameConverter.convert(frameGrabber.grab()); }
-                catch (Exception e) { e.printStackTrace(); }
+                try {
+                    image = frameConverter.convert(frameGrabber.grab());
+                } catch (Exception ignored) { }
 
                 if (image != null) {
                     frameBuilder.build(image);

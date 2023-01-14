@@ -135,7 +135,7 @@ public class MapImageBuilder extends ImageBuilder {
                     .getRenderers()
                     .get(0);
 
-            DataBuffer data = image.getData().getDataBuffer();
+            DataBuffer data = image.getRaster().getDataBuffer();
             byte[] pixels = ((DataBufferByte) data).getData();
 
             int ox = renderer.getOffsetX();
